@@ -669,7 +669,7 @@ function buildFooter(data) {
   const chips   = players.map(p => `<span class="chip">${esc(p)}</span>`).join('');
   const gameList = (data.jogos ?? []).map(j => `<span class="chip">${esc(j.nome)}</span>`).join('');
 
- /* el.innerHTML = `
+  el.innerHTML = `
     <div class="fi-block">
       <div class="fi-label">Pilotos · ${players.length}</div>
       <div class="chips">${chips || '<span style="color:var(--muted)">Nenhum cadastrado</span>'}</div>
@@ -679,16 +679,7 @@ function buildFooter(data) {
       <div class="fi-label">Jogos cadastrados</div>
       <div class="chips">${gameList || '<span style="color:var(--muted)">Nenhum cadastrado</span>'}</div>
     </div>
-
-    <div class="fi-block">
-      <div class="fi-label">Como adicionar resultados</div>
-      <p class="fi-note">
-        <strong>1.</strong> Abra o arquivo <code>data.json</code>.<br>
-        <strong>2.</strong> Dentro de um veículo, adicione uma entrada em <code>"recordes"</code>:<br>
-        <code>{ "jogador": "Nome", "tempo": "1:25.091" }</code><br>
-        <strong>3.</strong> Salve e faça push para o GitHub. Os tempos são ordenados automaticamente.
-      </p>
-    </div>`;/*
+ `;
 }
 
 /* ── Error state ─────────────────────────────────────────── */
