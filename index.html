@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conecta 2030 · Ranking de Corridas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── RESET ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── DESIGN TOKENS ─────────────────────────────────── */
+    :root {
+      --bg:           #0B0B11;
+      --surf:         #13131C;
+      --surf2:        #1A1A26;
+      --border:       #222233;
+      --border2:      #2A2A3C;
+
+      --red:          #D02E2E;
+      --text:         #DDDDF0;
+      --muted:        #50506A;
+
+      --gold:         #FFD166;
+      --silver:       #A5B0BB;
+      --bronze:       #AB7340;
+
+      --purple:       #A855F7;
+      --purple-bg:    rgba(168,85,247,.11);
+      --purple-glow:  0 0 14px rgba(168,85,247,.55);
+
+      --radius:       8px;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── SITE HEADER ────────────────────────────────────── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--bg);
+    }
+
+    .header-stripe {
+      height: 3px;
+      background: linear-gradient(90deg, #7B0000 0%, var(--red) 35%, #FF7070 50%, var(--red) 65%, #7B0000 100%);
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-flag { font-size: 26px; line-height: 1; }
+
+    .logo-text .name {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .logo-text .sub {
+      display: block;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-top: 2px;
+    }
+
+    .header-date {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── GAME TABS ──────────────────────────────────────── */
+    .tabs-bar {
+      position: sticky;
+      top: 63px;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tabs-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs-inner::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      padding: 11px 16px 13px;
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover                  { color: var(--text); }
+    .tab-btn.active                 { color: var(--text); border-bottom-color: var(--red); }
+
+    /* ── MAIN CONTENT ───────────────────────────────────── */
+    .content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── PANELS ─────────────────────────────────────────── */
+    .panel          { display: none; }
+    .panel.active   { display: block; }
+
+    .panel-empty {
+      padding: 80px 0;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .panel-empty .icon {
+      font-size: 44px;
+      opacity: .35;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .panel-empty p { font-size: 14px; line-height: 1.7; }
+
+    /* ── TRACK SECTION ──────────────────────────────────── */
+    .track-section { margin-top: 40px; }
+
+    .track-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .track-pip {
+      width: 4px;
+      height: 22px;
+      background: var(--red);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .track-name {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .track-stat {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── VEHICLE GRID ───────────────────────────────────── */
+    .vehicles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 14px;
+    }
+
+    /* ── VEHICLE CARD ───────────────────────────────────── */
+    .vcard {
+      background: var(--surf);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .15s;
+    }
+
+    .vcard:hover { border-color: var(--border2); }
+
+    .vcard-head {
+      background: var(--surf2);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .vcard-icon  { font-size: 15px; flex-shrink: 0; }
+
+    .vcard-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .vcard-count {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── RANKING ROWS ───────────────────────────────────── */
+    .rows { padding: 6px 0; }
+
+    /*
+      Columns: [pos] [name] [time] [gap]
+      Gap column fixed 56px so times stay aligned across all rows.
+    */
+    .row {
+      display: grid;
+      grid-template-columns: 38px 1fr auto 56px;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 14px;
+    }
+
+    /* P1 gets purple left stripe + tinted background (F1 purple sector reference) */
+    .row.leader {
+      background: var(--purple-bg);
+      border-left: 3px solid var(--purple);
+      padding-left: 11px;
+    }
+
+    .row:not(.leader):hover { background: rgba(255,255,255,.025); }
+
+    /* Position badge */
+    .pos {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .pos-1 { color: var(--gold); }
+    .pos-2 { color: var(--silver); }
+    .pos-3 { color: var(--bronze); }
+    .pos-n { color: var(--muted); font-size: 13px; }
+
+    /* Player name */
+    .pname {
+      font-size: 13px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Lap time — monospace so digits align */
+    .ptime {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-align: right;
+    }
+
+    .row.leader .ptime {
+      color: var(--purple);
+      text-shadow: var(--purple-glow);
+    }
+
+    /* Gap to leader — invisible on leader row */
+    .pgap {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .row.leader .pgap { visibility: hidden; }
+
+    /* Empty row */
+    .row-empty .pname { color: var(--muted); }
+
+    /* ── LEGEND ─────────────────────────────────────────── */
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 40px;
+      padding: 12px 16px;
+      background: var(--surf);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-wrap: wrap;
+    }
+
+    .legend-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-right: 4px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .legend-swatch-purple {
+      width: 3px;
+      height: 14px;
+      background: var(--purple);
+      border-radius: 2px;
+    }
+
+    /* ── FOOTER INFO ────────────────────────────────────── */
+    .footer-info {
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+      padding-top: 32px;
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .fi-block { flex: 1; min-width: 220px; }
+
+    .fi-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+    .chip {
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 9px;
+      color: var(--text);
+    }
+
+    .fi-note {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .fi-note code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--text);
+    }
+
+    .fi-note strong { color: var(--text); font-weight: 600; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .header-inner     { padding: 0 14px; }
+      .header-date      { display: none; }
+      .tabs-inner       { padding: 0 14px; }
+      .content          { padding: 0 14px 64px; }
+      .vehicles-grid    { grid-template-columns: 1fr; }
+      .footer-info      { gap: 28px; }
+      .legend           { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-stripe"></div>
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-flag">🏁</span>
+      <div class="logo-text">
+        <span class="name">Conecta 2030</span>
+        <span class="sub">Ranking de Corridas</span>
+      </div>
+    </div>
+    <span class="header-date" id="siteDate"></span>
+  </div>
+</header>
+
+<!-- ══ TABS ════════════════════════════════════════════════ -->
+<nav class="tabs-bar" aria-label="Jogos">
+  <div class="tabs-inner" id="tabsInner"></div>
+</nav>
+
+<!-- ══ CONTENT ═════════════════════════════════════════════ -->
+<div class="content">
+  <div id="allPanels"></div>
+
+  <!-- Footer -->
+  <div class="footer-info" id="footerInfo"></div>
+</div>
+
+
+<script>
+'use strict';
+
+/* ── Time Utilities ──────────────────────────────────────── */
+
+/**
+ * Converts a lap time string like "1:25.091" to milliseconds.
+ * Accepts comma or period as decimal separator.
+ */
+function toMs(str) {
+  const s = String(str).replace(',', '.').trim();
+  const colonIdx = s.indexOf(':');
+  if (colonIdx === -1) {
+    // No minutes part — treat as seconds.milliseconds
+    const [sec, ms = '0'] = s.split('.');
+    return Number(sec) * 1000 + Number(ms.padEnd(3, '0').slice(0, 3));
+  }
+  const mins = Number(s.slice(0, colonIdx));
+  const rest = s.slice(colonIdx + 1);
+  const [sec, ms = '0'] = rest.split('.');
+  return mins * 60000 + Number(sec) * 1000 + Number(ms.padEnd(3, '0').slice(0, 3));
+}
+
+/**
+ * Formats a millisecond gap into "+S.mmm" or "+M:SS.mmm".
+ * Returns empty string for 0 (leader row).
+ */
+function fmtGap(ms) {
+  if (ms <= 0) return '';
+  const m   = Math.floor(ms / 60000);
+  const s   = Math.floor((ms % 60000) / 1000);
+  const rem = String(ms % 1000).padStart(3, '0');
+  if (m > 0) return `+${m}:${String(s).padStart(2, '0')}.${rem}`;
+  return `+${s}.${rem}`;
+}
+
+/* ── Helpers ─────────────────────────────────────────────── */
+
+function posLabel(n) {
+  return { 1: '🥇', 2: '🥈', 3: '🥉' }[n] ?? `P${n}`;
+}
+
+function posClass(n) {
+  return { 1: 'pos-1', 2: 'pos-2', 3: 'pos-3' }[n] ?? 'pos-n';
+}
+
+function slugify(s) {
+  return String(s)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* ── Build the entire site from JSON data ────────────────── */
+function buildSite(data) {
+  const tabsEl   = document.getElementById('tabsInner');
+  const panelsEl = document.getElementById('allPanels');
+
+  const jogos = data.jogos ?? [];
+
+  jogos.forEach((jogo, gi) => {
+    const panelId = 'panel-' + esc(jogo.id);
+
+    /* ── Tab button ── */
+    const tab = document.createElement('button');
+    tab.className   = 'tab-btn' + (gi === 0 ? ' active' : '');
+    tab.textContent = jogo.nome;
+    tab.setAttribute('aria-controls', panelId);
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(panelId).classList.add('active');
+    });
+    tabsEl.appendChild(tab);
+
+    /* ── Panel ── */
+    const panel   = document.createElement('section');
+    panel.id        = panelId;
+    panel.className = 'panel' + (gi === 0 ? ' active' : '');
+    panel.setAttribute('role', 'tabpanel');
+
+    const pistas = jogo.pistas ?? [];
+
+    if (pistas.length === 0) {
+      panel.innerHTML = `
+        <div class="panel-empty">
+          <span class="icon">🏁</span>
+          <p>Nenhum tempo registrado ainda para <strong>${esc(jogo.nome)}</strong>.<br>
+          Edite <code>data.json</code> e adicione pistas, veículos e tempos.</p>
+        </div>`;
+      panelsEl.appendChild(panel);
+      return;
+    }
+
+    /* ── Tracks ── */
+    pistas.forEach(pista => {
+      const veiculos     = pista.veiculos ?? [];
+      const totalEntries = veiculos.reduce((s, v) => s + (v.recordes?.length ?? 0), 0);
+
+      /* Track section */
+      const trackEl = document.createElement('div');
+      trackEl.className = 'track-section';
+
+      trackEl.innerHTML = `
+        <div class="track-header">
+          <div class="track-pip"></div>
+          <span class="track-name">${esc(pista.nome)}</span>
+          <span class="track-stat">${totalEntries} tempo${totalEntries !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="vehicles-grid" id="vg-${slugify(jogo.id)}-${slugify(pista.nome)}"></div>
+      `;
+      panel.appendChild(trackEl);
+
+      const vGrid = trackEl.querySelector('.vehicles-grid');
+
+      /* ── Vehicle cards ── */
+      veiculos.forEach(veiculo => {
+        const sorted   = [...(veiculo.recordes ?? [])].sort(
+          (a, b) => toMs(a.tempo) - toMs(b.tempo)
+        );
+        const leaderMs = sorted.length ? toMs(sorted[0].tempo) : 0;
+
+        /* Build rows HTML */
+        let rowsHtml = '';
+
+        if (sorted.length === 0) {
+          rowsHtml = `
+            <div class="row row-empty">
+              <span class="pos pos-n">—</span>
+              <span class="pname">Sem tempos registrados</span>
+              <span class="ptime"></span>
+              <span class="pgap"></span>
+            </div>`;
+        } else {
+          rowsHtml = sorted.map((rec, i) => {
+            const p   = i + 1;
+            const gap = fmtGap(toMs(rec.tempo) - leaderMs);
+            return `
+              <div class="row${p === 1 ? ' leader' : ''}">
+                <span class="pos ${posClass(p)}">${posLabel(p)}</span>
+                <span class="pname">${esc(rec.jogador)}</span>
+                <span class="ptime">${esc(String(rec.tempo).replace(',', '.'))}</span>
+                <span class="pgap">${gap}</span>
+              </div>`;
+          }).join('');
+        }
+
+        /* Card element */
+        const card = document.createElement('div');
+        card.className = 'vcard';
+        card.innerHTML = `
+          <div class="vcard-head">
+            <span class="vcard-icon">🚗</span>
+            <span class="vcard-name">${esc(veiculo.nome)}</span>
+            <span class="vcard-count">${sorted.length} piloto${sorted.length !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="rows">${rowsHtml}</div>`;
+
+        vGrid.appendChild(card);
+      });
+    });
+
+    /* ── Legend (once per panel, at bottom) ── */
+    const legend = document.createElement('div');
+    legend.className = 'legend';
+    legend.innerHTML = `
+      <span class="legend-title">Legenda</span>
+      <span class="legend-item"><div class="legend-swatch-purple"></div> Tempo mais rápido (setor roxo)</span>
+      <span class="legend-item">🥇 P1 &nbsp; 🥈 P2 &nbsp; 🥉 P3</span>
+      <span class="legend-item" style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">
+        +X.XXX = gap para o líder
+      </span>`;
+    panel.appendChild(legend);
+
+    panelsEl.appendChild(panel);
+  });
+
+  /* ── Footer ── */
+  buildFooter(data);
+
+  /* ── Header date ── */
+  const d = new Date();
+  document.getElementById('siteDate').textContent =
+    d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+}
+
+/* ── Footer with player list and help ───────────────────── */
+function buildFooter(data) {
+  const el      = document.getElementById('footerInfo');
+  const players = data.jogadores ?? [];
+  const chips   = players.map(p => `<span class="chip">${esc(p)}</span>`).join('');
+  const gameList = (data.jogos ?? []).map(j => `<span class="chip">${esc(j.nome)}</span>`).join('');
+
+  el.innerHTML = `
+    <div class="fi-block">
+      <div class="fi-label">Pilotos · ${players.length}</div>
+      <div class="chips">${chips || '<span style="color:var(--muted)">Nenhum cadastrado</span>'}</div>
+    </div>
+
+    <div class="fi-block">
+      <div class="fi-label">Jogos cadastrados</div>
+      <div class="chips">${gameList || '<span style="color:var(--muted)">Nenhum cadastrado</span>'}</div>
+    </div>
+
+    <div class="fi-block">
+      <div class="fi-label">Como adicionar resultados</div>
+      <p class="fi-note">
+        <strong>1.</strong> Abra o arquivo <code>data.json</code>.<br>
+        <strong>2.</strong> Dentro de um veículo, adicione uma entrada em <code>"recordes"</code>:<br>
+        <code>{ "jogador": "Nome", "tempo": "1:25.091" }</code><br>
+        <strong>3.</strong> Salve e faça push para o GitHub. Os tempos são ordenados automaticamente.
+      </p>
+    </div>`;
+}
+
+/* ── Error state ─────────────────────────────────────────── */
+function showError(msg) {
+  document.getElementById('allPanels').innerHTML = `
+    <div class="panel-empty" style="display:block">
+      <span class="icon">⚠️</span>
+      <p>${msg}</p>
+    </div>`;
+}
+
+/* ── Load data.json ──────────────────────────────────────── */
+fetch('data.json')
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  })
+  .then(buildSite)
+  .catch(err => {
+    console.error('[Conecta 2030] Erro ao carregar data.json:', err);
+    showError(
+      'Não foi possível carregar <code>data.json</code>.<br>' +
+      'Verifique que o arquivo está na mesma pasta que <code>index.html</code> e recarregue a página.'
+    );
+  });
+</script>
+</body>
+</html>
