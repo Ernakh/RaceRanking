@@ -669,7 +669,7 @@ function buildFooter(data) {
   const chips   = players.map(p => `<span class="chip">${esc(p)}</span>`).join('');
   const gameList = (data.jogos ?? []).map(j => `<span class="chip">${esc(j.nome)}</span>`).join('');
 
-  el.innerHTML = `
+ /* el.innerHTML = `
     <div class="fi-block">
       <div class="fi-label">Pilotos · ${players.length}</div>
       <div class="chips">${chips || '<span style="color:var(--muted)">Nenhum cadastrado</span>'}</div>
@@ -689,7 +689,7 @@ function buildFooter(data) {
         <strong>3.</strong> Salve e faça push para o GitHub. Os tempos são ordenados automaticamente.
       </p>
     </div>`;
-}
+}*/
 
 /* ── Error state ─────────────────────────────────────────── */
 function showError(msg) {
